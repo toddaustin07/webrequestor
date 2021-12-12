@@ -1,0 +1,15 @@
+automation:
+  conditions: []
+  actions:
+    - label: POST URL
+      displayType: textField
+      textField:
+        command: POST
+        argumentType: string
+    - label: GET URL
+      displayType: textField
+      textField:
+        command: GET
+        argumentType: string
+id: partyvoice23922.webrequest
+version: 1

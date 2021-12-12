@@ -1,0 +1,16 @@
+id: partyvoice23922.keyvalue
+version: 1
+status: proposed
+name: keyvalue
+attributes:
+  keyvalue:
+    schema:
+      type: object
+      properties:
+        value:
+          type: string
+      additionalProperties: false
+      required:
+        - value
+    enumCommands: []
+commands: {}

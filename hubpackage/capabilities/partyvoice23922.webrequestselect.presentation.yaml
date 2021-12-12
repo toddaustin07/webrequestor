@@ -1,0 +1,478 @@
+dashboard:
+  states: []
+  actions: []
+  basicPlus: []
+detailView:
+  - label: Select web request to execute
+    displayType: list
+    list:
+      command:
+        name: setSelection
+        alternatives:
+          - key: '1'
+            value: 'Request #1'
+            type: active
+          - key: '2'
+            value: 'Request #2'
+            type: active
+          - key: '3'
+            value: 'Request #3'
+            type: active
+          - key: '4'
+            value: 'Request #4'
+            type: active
+          - key: '5'
+            value: 'Request #5'
+            type: active
+          - key: '6'
+            value: 'Request #6'
+            type: active
+          - key: '7'
+            value: 'Request #7'
+            type: active
+          - key: '8'
+            value: 'Request #8'
+            type: active
+          - key: '9'
+            value: 'Request #9'
+            type: active
+          - key: '10'
+            value: 'Request #10'
+            type: active
+          - key: '11'
+            value: 'Request #11'
+            type: active
+          - key: '12'
+            value: 'Request #12'
+            type: active
+          - key: '13'
+            value: 'Request #13'
+            type: active
+          - key: '14'
+            value: 'Request #14'
+            type: active
+          - key: '15'
+            value: 'Request #15'
+            type: active
+          - key: '16'
+            value: 'Request #16'
+            type: active
+          - key: '17'
+            value: 'Request #17'
+            type: active
+          - key: '18'
+            value: 'Request #18'
+            type: active
+          - key: '19'
+            value: 'Request #19'
+            type: active
+          - key: '20'
+            value: 'Request #20'
+            type: active
+          - key: '21'
+            value: 'Request #21'
+            type: active
+          - key: '22'
+            value: 'Request #22'
+            type: active
+          - key: '23'
+            value: 'Request #23'
+            type: active
+          - key: '24'
+            value: 'Request #24'
+            type: active
+          - key: '25'
+            value: 'Request #25'
+            type: active
+          - key: '26'
+            value: 'Request #26'
+            type: active
+          - key: '27'
+            value: 'Request #27'
+            type: active
+          - key: '28'
+            value: 'Request #28'
+            type: active
+          - key: '29'
+            value: 'Request #29'
+            type: active
+          - key: '30'
+            value: 'Request #30'
+            type: active
+          - key: '31'
+            value: 'Request #31'
+            type: active
+          - key: '32'
+            value: 'Request #32'
+            type: active
+          - key: '33'
+            value: 'Request #33'
+            type: active
+          - key: '34'
+            value: 'Request #34'
+            type: active
+          - key: '35'
+            value: 'Request #35'
+            type: active
+          - key: '36'
+            value: 'Request #36'
+            type: active
+          - key: '37'
+            value: 'Request #37'
+            type: active
+          - key: '38'
+            value: 'Request #38'
+            type: active
+          - key: '39'
+            value: 'Request #39'
+            type: active
+          - key: '40'
+            value: 'Request #40'
+            type: active
+          - key: '41'
+            value: 'Request #41'
+            type: active
+          - key: '42'
+            value: 'Request #42'
+            type: active
+          - key: '43'
+            value: 'Request #43'
+            type: active
+          - key: '44'
+            value: 'Request #44'
+            type: active
+          - key: '45'
+            value: 'Request #45'
+            type: active
+          - key: '46'
+            value: 'Request #46'
+            type: active
+          - key: '47'
+            value: 'Request #47'
+            type: active
+          - key: '48'
+            value: 'Request #48'
+            type: active
+          - key: '49'
+            value: 'Request #49'
+            type: active
+          - key: '50'
+            value: 'Request #50'
+            type: active
+        argumentType: string
+      state:
+        value: selection.value
+        valueType: string
+        alternatives:
+          - key: '1'
+            value: 'Request #1'
+            type: active
+          - key: '2'
+            value: 'Request #2'
+            type: active
+          - key: '3'
+            value: 'Request #3'
+            type: active
+          - key: '4'
+            value: 'Request #4'
+            type: active
+          - key: '5'
+            value: 'Request #5'
+            type: active
+          - key: '6'
+            value: 'Request #6'
+            type: active
+          - key: '7'
+            value: 'Request #7'
+            type: active
+          - key: '8'
+            value: 'Request #8'
+            type: active
+          - key: '9'
+            value: 'Request #9'
+            type: active
+          - key: '10'
+            value: 'Request #10'
+            type: active
+          - key: '11'
+            value: 'Request #11'
+            type: active
+          - key: '12'
+            value: 'Request #12'
+            type: active
+          - key: '13'
+            value: 'Request #13'
+            type: active
+          - key: '14'
+            value: 'Request #14'
+            type: active
+          - key: '15'
+            value: 'Request #15'
+            type: active
+          - key: '16'
+            value: 'Request #16'
+            type: active
+          - key: '17'
+            value: 'Request #17'
+            type: active
+          - key: '18'
+            value: 'Request #18'
+            type: active
+          - key: '19'
+            value: 'Request #19'
+            type: active
+          - key: '20'
+            value: 'Request #20'
+            type: active
+          - key: '21'
+            value: 'Request #21'
+            type: active
+          - key: '22'
+            value: 'Request #22'
+            type: active
+          - key: '23'
+            value: 'Request #23'
+            type: active
+          - key: '24'
+            value: 'Request #24'
+            type: active
+          - key: '25'
+            value: 'Request #25'
+            type: active
+          - key: '26'
+            value: 'Request #26'
+            type: active
+          - key: '27'
+            value: 'Request #27'
+            type: active
+          - key: '28'
+            value: 'Request #28'
+            type: active
+          - key: '29'
+            value: 'Request #29'
+            type: active
+          - key: '30'
+            value: 'Request #30'
+            type: active
+          - key: '31'
+            value: 'Request #31'
+            type: active
+          - key: '32'
+            value: 'Request #32'
+            type: active
+          - key: '33'
+            value: 'Request #33'
+            type: active
+          - key: '34'
+            value: 'Request #34'
+            type: active
+          - key: '35'
+            value: 'Request #35'
+            type: active
+          - key: '36'
+            value: 'Request #36'
+            type: active
+          - key: '37'
+            value: 'Request #37'
+            type: active
+          - key: '38'
+            value: 'Request #38'
+            type: active
+          - key: '39'
+            value: 'Request #39'
+            type: active
+          - key: '40'
+            value: 'Request #40'
+            type: active
+          - key: '41'
+            value: 'Request #41'
+            type: active
+          - key: '42'
+            value: 'Request #42'
+            type: active
+          - key: '43'
+            value: 'Request #43'
+            type: active
+          - key: '44'
+            value: 'Request #44'
+            type: active
+          - key: '45'
+            value: 'Request #45'
+            type: active
+          - key: '46'
+            value: 'Request #46'
+            type: active
+          - key: '47'
+            value: 'Request #47'
+            type: active
+          - key: '48'
+            value: 'Request #48'
+            type: active
+          - key: '49'
+            value: 'Request #49'
+            type: active
+          - key: '50'
+            value: 'Request #50'
+            type: active
+    state: null
+automation:
+  conditions: []
+  actions:
+    - label: Pre-configured web request
+      displayType: list
+      list:
+        alternatives:
+          - key: '1'
+            value: 'Request #1'
+            type: active
+          - key: '2'
+            value: 'Request #2'
+            type: active
+          - key: '3'
+            value: 'Request #3'
+            type: active
+          - key: '4'
+            value: 'Request #4'
+            type: active
+          - key: '5'
+            value: 'Request #5'
+            type: active
+          - key: '6'
+            value: 'Request #6'
+            type: active
+          - key: '7'
+            value: 'Request #7'
+            type: active
+          - key: '8'
+            value: 'Request #8'
+            type: active
+          - key: '9'
+            value: 'Request #9'
+            type: active
+          - key: '10'
+            value: 'Request #10'
+            type: active
+          - key: '11'
+            value: 'Request #11'
+            type: active
+          - key: '12'
+            value: 'Request #12'
+            type: active
+          - key: '13'
+            value: 'Request #13'
+            type: active
+          - key: '14'
+            value: 'Request #14'
+            type: active
+          - key: '15'
+            value: 'Request #15'
+            type: active
+          - key: '16'
+            value: 'Request #16'
+            type: active
+          - key: '17'
+            value: 'Request #17'
+            type: active
+          - key: '18'
+            value: 'Request #18'
+            type: active
+          - key: '19'
+            value: 'Request #19'
+            type: active
+          - key: '20'
+            value: 'Request #20'
+            type: active
+          - key: '21'
+            value: 'Request #21'
+            type: active
+          - key: '22'
+            value: 'Request #22'
+            type: active
+          - key: '23'
+            value: 'Request #23'
+            type: active
+          - key: '24'
+            value: 'Request #24'
+            type: active
+          - key: '25'
+            value: 'Request #25'
+            type: active
+          - key: '26'
+            value: 'Request #26'
+            type: active
+          - key: '27'
+            value: 'Request #27'
+            type: active
+          - key: '28'
+            value: 'Request #28'
+            type: active
+          - key: '29'
+            value: 'Request #29'
+            type: active
+          - key: '30'
+            value: 'Request #30'
+            type: active
+          - key: '31'
+            value: 'Request #31'
+            type: active
+          - key: '32'
+            value: 'Request #32'
+            type: active
+          - key: '33'
+            value: 'Request #33'
+            type: active
+          - key: '34'
+            value: 'Request #34'
+            type: active
+          - key: '35'
+            value: 'Request #35'
+            type: active
+          - key: '36'
+            value: 'Request #36'
+            type: active
+          - key: '37'
+            value: 'Request #37'
+            type: active
+          - key: '38'
+            value: 'Request #38'
+            type: active
+          - key: '39'
+            value: 'Request #39'
+            type: active
+          - key: '40'
+            value: 'Request #40'
+            type: active
+          - key: '41'
+            value: 'Request #41'
+            type: active
+          - key: '42'
+            value: 'Request #42'
+            type: active
+          - key: '43'
+            value: 'Request #43'
+            type: active
+          - key: '44'
+            value: 'Request #44'
+            type: active
+          - key: '45'
+            value: 'Request #45'
+            type: active
+          - key: '46'
+            value: 'Request #46'
+            type: active
+          - key: '47'
+            value: 'Request #47'
+            type: active
+          - key: '48'
+            value: 'Request #48'
+            type: active
+          - key: '49'
+            value: 'Request #49'
+            type: active
+          - key: '50'
+            value: 'Request #50'
+            type: active
+        command: setSelection
+        argumentType: string
+id: partyvoice23922.webrequestselect
+version: 1

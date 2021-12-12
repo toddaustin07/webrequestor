@@ -1,0 +1,5 @@
+name: 'Web Requestor Multi v1.0'
+packageKey: 'webreqmv1.0'
+permissions:
+    lan: {}
+    discovery: {}
