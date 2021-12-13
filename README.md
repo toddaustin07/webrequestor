@@ -51,8 +51,10 @@ Response data returned from the HTTP request will be shown in the HTTP Response 
 
 To make it possible for Rules to act on the returned data, there is a Settings option that allows you to specify the XML or JSON key for a single expected value in the response data.  If this Settings option is configured, the key will be searched for in the returned HTTP data and if found, the corresponding value will be displayed in the field labeled 'Extracted key value' on the device details screen.
 
+### Creating multiple Web Requestor Devices
+Multiple web requestor devices can be created to facilitate building automations/rules around an individual device’s web request(s). A button is included in each device’s details screen to create a new device. Each device can be configured with up to 50 web requests, and includes the option to specify a key for JSON and XML value extraction.
 
-## Creating Rules with custom HTTP requests
+### Creating Rules with custom HTTP requests
 
 If you want to specify an 'on-the-fly' custom web request URL in a Rule, here is an example of how that would be done:
 ```
