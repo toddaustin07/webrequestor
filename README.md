@@ -42,7 +42,7 @@ Once the request has been sent, the HTTP response code will be displayed in the 
 **Non-HTTP errors** will also be displayed in the HTTP Response Code field, but will always be preceeded by '\*\*' (two asterisks).  Possible values are:
 - \*\*Timeout: the URL used likely doesn't exist; there is a 3-second timeout for all HTTP requests
 - \*\*No response: no acknowledgement from server; it didn’t recognize the request
-- \*\*Refused: connection was refused (no application at give port)
+- \*\*Refused: connection was refused (no application at given port)
 - \*\*Failed: the request could not be executed for various other reasons, e.g. socket error, etc.
 
 Response data returned from the HTTP request will be shown in the HTTP Response Data field.  If the HTTP response data is XML, JSON, or HTTP data, then SmartThings will try to format it as such when it is displayed.
