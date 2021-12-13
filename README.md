@@ -28,7 +28,7 @@ POST:https://<ip:port/path> --OR-- GET:https://<ip:port/path>
 ```
 #### Notes regarding URL string
 
-* You must include a valid IP and port number; if you normally don’t include port number in other apps or a browser, use ‘:80’
+* You must include a valid IP *and* port number; if you don’t specify a port number in other apps or a browser, use ‘:80’
 * If your URL contains any spaces, use ‘%20’
 * Each request ‘slot’ has a default example string you can modify; note that any slot can be either POST or GET regardless of the preloaded example 
 * URL strings can include any valid HTTP URL string, including parameters in the form of '?parm1=xxx'
@@ -39,7 +39,7 @@ If the web request number (1-50) you selected has not been configured with a val
 
 Once the request has been sent, the HTTP response code will be displayed in the corresponding field (200, 401, etc)
 
-**Non-HTTP errors** will also be displayed in the HTTP Response Code field, but will always bed preceeded by '\*\*' (two asterisks).  Possible values are:
+**Non-HTTP errors** will also be displayed in the HTTP Response Code field, but will always be preceeded by '\*\*' (two asterisks).  Possible values are:
 - \*\*Timeout: the URL used likely doesn't exist; there is a 3-second timeout for all HTTP requests
 - \*\*No response: no acknowledgement from server; it didn’t recognize the request
 - \*\*Refused: connection was refused (no application at give port)
