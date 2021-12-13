@@ -54,9 +54,11 @@ To make it possible for Rules to act on the returned data, there is a Settings o
 ### Creating multiple SmartThings Web Requestor Devices
 Multiple SmartThings devices can be created to facilitate building automations/rules around an individual SmartThings device’s HTTP request(s). A button is included in each device’s details screen to create a new device. Each device can be configured with up to 50 web requests, and includes the option to specify a key for JSON and XML value extraction.
 
-### Creating Rules with custom HTTP requests
+### Using custom HTTP requests from Automations or Rules
 
-If you want to execute an 'on-the-fly' custom web request URL in a Rule, here is an example of how that would be done:
+If you want to execute an 'on-the-fly' custom web request URL, this can be done with either Automations or Rules.  In Automations, in the mobile app simply select the desired Action of GET or POST, and provide the URL string in the blank field provided.
+
+For Rules, here is an example of how this would be done:
 ```
 {
   "name": "Test Web Requestor",
