@@ -9,7 +9,7 @@ There are two ways this driver can be used:
 
 ### Limitations
 
-The Edge platform limits communication to IP addresses on your local LAN only.  However I have a bridge server program that can be run on any always-on computer (Windows/Linux/Mac) on your LAN that can overcome this.  See xxxxx for more details.
+The Edge platform limits communication to IP addresses on your local LAN only.  However I have a bridge server program that can be run on any always-on computer (Windows/Linux/Mac/Raspberry Pi) on your LAN that can overcome this.  See https://github.com/toddaustin07/shellymotion for more details.
 
 ## Instructions
 
