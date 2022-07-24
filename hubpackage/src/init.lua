@@ -25,8 +25,8 @@ local cosock = require "cosock"                 -- just for time
 local socket = require "cosock.socket"          -- just for time
 local http = cosock.asyncify "ssl.https"
 local https = cosock.asyncify "ssl.https"
-http.TIMEOUT = 3
-https.TIMEOUT = 3
+http.TIMEOUT = 15
+https.TIMEOUT = 15
 local ltn12 = require "ltn12"
 local log = require "log"
 
