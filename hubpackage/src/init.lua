@@ -23,8 +23,8 @@ local capabilities = require "st.capabilities"
 local Driver = require "st.driver"
 local cosock = require "cosock"                 -- just for time
 local socket = require "cosock.socket"          -- just for time
-local http = require "socket.http"
-local https = require "ssl.https"
+local http = cosock.asyncify "socket.http"
+local https = cosock.asyncify "ssl.https"
 http.TIMEOUT = 3
 https.TIMEOUT = 3
 local ltn12 = require "ltn12"
@@ -39,45 +39,15 @@ local devcounter = 1
 -- Module variables
 local webreqDriver
 local initialized = false
-local lastinfochange = socket.gettime()
 local webreq_commands = {}
-local cleardevice = {}
 
--- Custom Capabilities
-local capdefs = require "capabilitydefs"
-
-local cap_select = capabilities.build_cap_from_json_string(capdefs.select_cap)
-capabilities["partyvoice23922.webrequestselect"] = cap_select
-
-local cap_requestcmd = capabilities.build_cap_from_json_string(capdefs.requestcmd_cap)
-capabilities["partyvoice23922.webrequest"] = cap_requestcmd
-
-local cap_httpcode = capabilities.build_cap_from_json_string(capdefs.httpcode_cap)
-capabilities["partyvoice23922.httpcode"] = cap_httpcode
-
-local cap_response = capabilities.build_cap_from_json_string(capdefs.response_cap)
-capabilities["partyvoice23922.httpresponse"] = cap_response
-
-local cap_keyvalue = capabilities.build_cap_from_json_string(capdefs.keyvalue_cap)
-capabilities["partyvoice23922.keyvalue"] = cap_keyvalue
-
-local cap_createdev = capabilities.build_cap_from_json_string(capdefs.createdev_cap)
-capabilities["partyvoice23922.createanother"] = cap_createdev
-
-
-local displevels = 0
-
--- For debugging only
-local function disptable(table, tab, maxlevels)
-
-  displevels = displevels + 1
-  for key, value in pairs(table) do
-    log.debug (tab .. key, value)
-    if (type(value) == 'table') and (displevels < maxlevels) then
-      disptable(value, '  ' .. tab, maxlevels)
-    end
-  end
-end
+-- Custom capabilities
+local cap_select = capabilities["partyvoice23922.webrequestselect"]
+local cap_requestcmd = capabilities["partyvoice23922.webrequest"]
+local cap_httpcode = capabilities["partyvoice23922.httpcode"]
+local cap_response = capabilities["partyvoice23922.httpresponse"]
+local cap_keyvalue = capabilities["partyvoice23922.keyvalue"]
+local cap_createdev = capabilities["partyvoice23922.createanother"]
 
 
 local function validate_address(lanAddress)
@@ -90,7 +60,7 @@ local function validate_address(lanAddress)
   if ip then
     local chunks = {ip:match("^(%d+)%.(%d+)%.(%d+)%.(%d+)$")}
     if #chunks == 4 then
-      for i, v in pairs(chunks) do
+      for _, v in pairs(chunks) do
         if tonumber(v) > 255 then 
           valid = false
           break
@@ -123,14 +93,14 @@ local function validate_address(lanAddress)
       
 end
 
-
+-- Validate provided http request string
 local function validate(input, silent)
 
   local msg
   local method = string.upper(input:match('(%a+):'))
   local url = input:match(':(.+)')
   
-  if (method == 'GET') or (method == 'POST') then
+  if (method == 'GET') or (method == 'POST') or (method == 'PUT') then
 
     local protocol = url:match('^(%a+):')
     if (protocol == 'http') or (protocol == 'https') then
@@ -147,6 +117,11 @@ local function validate(input, silent)
       else
         urladdr = url:sub(skiplen)
       end
+
+      -- if no port given, default it to :80
+      if not urladdr:match(':%d+$') then
+        urladdr = urladdr .. ':80'
+      end
       
       if validate_address(urladdr) then
         return method, url
@@ -158,7 +133,7 @@ local function validate(input, silent)
       msg = "URL does not start with 'http://' or 'https://'"
     end
   else
-    msg = "Request string does not start with valid method ('GET:' or 'POST:')"
+    msg = "Request string does not start with valid method ('GET:' or 'POST:' or 'PUT:')"
   end
   
   if not silent then; log.warn (msg); end
@@ -166,10 +141,20 @@ local function validate(input, silent)
   
 end
 
-
-local function issue_request(device, req_method, req_url)
+-- Send http or https request and emit response, or handle errors
+local function issue_request(device, req_method, req_url, sendbody)
 
   local responsechunks = {}
+  
+  local content_length = 0
+  if sendbody then
+    content_length = string.len(sendbody)
+  end
+  
+  local sendheaders = {
+                        ["Acccept"] = '*/*',
+                        ["Content-Length"] = content_length,
+                      }
   
   local protocol = req_url:match('^(%a+):')
   local body, code, headers, status
@@ -179,9 +164,11 @@ local function issue_request(device, req_method, req_url)
     body, code, headers, status = https.request{
       method = req_method,
       url = req_url,
+      headers = sendheaders,
       protocol = "any",
       options =  {"all"},
       verify = "none",
+      source = ltn12.source.string(sendbody),
       sink = ltn12.sink.table(responsechunks)
      }
 
@@ -189,6 +176,8 @@ local function issue_request(device, req_method, req_url)
     body, code, headers, status = http.request{
       method = req_method,
       url = req_url,
+      headers = sendheaders,
+      source = ltn12.source.string(sendbody),
       sink = ltn12.sink.table(responsechunks)
      }
   end
@@ -223,26 +212,35 @@ local function issue_request(device, req_method, req_url)
       log.debug (string.format('Response:\n>>>%s<<<', response))
       
       if response ~= '' then
-        device:emit_event(cap_response.response(response))
+        device:emit_event(cap_response.response(response:sub(1,1024)))
         
         if device.preferences.valuekey then
           if device.preferences.valuekey ~= 'x1x' then
             local kvalue = parser.findkeyvalue(response, device.preferences.valuekey)
             
             if kvalue then
-              device:emit_event(cap_keyvalue.keyvalue(kvalue))
+              device:emit_event(cap_keyvalue.keyvalue(tostring(kvalue)))
+            else
+              device:emit_event(cap_keyvalue.keyvalue('--', { visibility = { displayed = false } }))
             end
           end
+        else
+          device:emit_event(cap_keyvalue.keyvalue('--', { visibility = { displayed = false } }))
+        end
+      else
+        if not old_driver then
+          device:emit_event(cap_response.response('--', { visibility = { displayed = false } }))
         end
       end
       
     else
+      device:emit_event(cap_response.response('--', { visibility = { displayed = false } }))
       log.warn (string.format("HTTP %s request to %s failed with http code %s, status: %s", req_method, req_url, tostring(httpcode_num), status))
       returnstatus = 'Failed'
     end
   
   else
-
+    
     if httpcode_str then
       if string.find(httpcode_str, "closed") then
         log.warn ("Socket closed unexpectedly")
@@ -262,11 +260,11 @@ local function issue_request(device, req_method, req_url)
       returnstatus = "No response code"
     end
 
-    
     if old_driver then
       device:emit_event(cap_response.response('**'..returnstatus))
     else
       device:emit_event(cap_httpcode.httpcode('**'..returnstatus))
+      device:emit_event(cap_response.response('--', { visibility = { displayed = false } }))
     end
     
   end
@@ -305,20 +303,11 @@ local function create_another_device(driver, counter)
 end
 
 
-local function clearmsg ()
-
-  if cleardevice then
-    cleardevice:emit_event(cap_select.selection(' '))
-    cleardevice = nil
-  end
-
-end
-
 -----------------------------------------------------------------------
 --										COMMAND HANDLERS
 -----------------------------------------------------------------------
 
-
+-- Selection made in mobile app
 local function handle_selection(driver, device, command)
 
   log.debug("Web request selection = " .. command.command, command.args.value)
@@ -327,25 +316,32 @@ local function handle_selection(driver, device, command)
   
   if type(reqnumber) == 'number' then
 
-    device:emit_event(cap_httpcode.httpcode(' '))
-    device:emit_event(cap_response.response(' '))
-    device:emit_event(cap_keyvalue.keyvalue('--'))
     if type(webreq_commands[device.id][reqnumber]) == 'table' then
       device:emit_event(cap_select.selection(command.args.value))
+      
+      local body = nil
+      if reqnumber <= 5 then
+        if device.preferences['body'..tostring(reqnumber)] ~= '--' then
+          body = device.preferences['body'..tostring(reqnumber)]
+        end
+      end
+      
       log.info (string.format('SEND %s COMMAND: %s', webreq_commands[device.id][reqnumber].method, webreq_commands[device.id][reqnumber].url))
-      local status = issue_request(device, webreq_commands[device.id][reqnumber].method, webreq_commands[device.id][reqnumber].url)
+      log.info ('\twith body:', body)
+      device.thread:queue_event(issue_request, device, webreq_commands[device.id][reqnumber].method, webreq_commands[device.id][reqnumber].url, body)
       
     else
       log.debug (string.format('Web request #%d not configured', reqnumber))
       device:emit_event(cap_select.selection('Not configured'))
     end
     
-    cleardevice = device
-    driver:call_with_delay(3, clearmsg)
+    driver:call_with_delay(5, function() 
+                                device:emit_event(cap_select.selection(' ', { visibility = { displayed = false }, state_change = true }))
+                              end, 'clear msg')
   end
 end
 
-
+-- Request coming from automation routine/rule
 local function handle_requestcmd(_, device, command)
 
   log.debug (string.format('%s command Received; url = %s', command.command, command.args.url))
@@ -353,9 +349,7 @@ local function handle_requestcmd(_, device, command)
   if (command.command == 'GET') or (command.command == 'POST') then
   
     if command.args.url ~= nil then
-      device:emit_event(cap_response.response('--'))
-      device:emit_event(cap_keyvalue.keyvalue('--'))
-      issue_request(device, command.command, command.args.url)
+      device.thread:queue_event(issue_request, device, command.command, command.args.url, nil)
     else
       log.error ('\tURL command argument missing')
     end
@@ -364,6 +358,7 @@ local function handle_requestcmd(_, device, command)
   end
 
 end
+
 
 local function handle_createdev(driver, device, command)
 
@@ -397,12 +392,15 @@ local function device_init(driver, device)
         webreq_commands[device.id][pnum] = {}
         webreq_commands[device.id][pnum].method = method
         webreq_commands[device.id][pnum].url = url
-       end
-     end
+        if pnum <= 5 then
+          webreq_commands[device.id][pnum].body = device.preferences['body'..tostring(pnum)]
+        end
+      end
+    end
   end
 
   initialized = true
-  device:emit_event(cap_select.selection(' '))
+  device:emit_event(cap_select.selection(' ', { visibility = { displayed = false } }))
   device:online()
   
 end
@@ -412,6 +410,10 @@ end
 local function device_added (driver, device)
 
   log.info(device.id .. ": " .. device.device_network_id .. "> ADDED")
+
+	device:emit_event(cap_httpcode.httpcode(' '))
+	device:emit_event(cap_response.response(' '))
+	device:emit_event(cap_keyvalue.keyvalue(' '))
   
 end
 
@@ -429,8 +431,6 @@ local function device_removed(_, device)
   
   log.warn(device.id .. ": " .. device.device_network_id .. "> removed")
   
-  --initialized = false
-  
 end
 
 
@@ -445,68 +445,59 @@ local function handler_infochanged (driver, device, event, args)
 
   log.debug ('Info changed handler invoked')
 
-  local timenow = socket.gettime()
-  local timesincelast = timenow - lastinfochange
-
-  log.debug('Time since last info_changed:', timesincelast)
+  -- Did preferences change?
+  if args.old_st_store.preferences then
   
-  lastinfochange = timenow
-  
-  if timesincelast > 10 then
+    if args.old_st_store.preferences.valuekey ~= device.preferences.valuekey then
+      log.info (string.format('Value key changed to %s', device.preferences.valuekey))
+      
+    elseif args.old_st_store.preferences.timeout ~= device.preferences.timeout then
+      log.info (string.format('Timeout changed to %s', device.preferences.timeout))
+      http.TIMEOUT = device.preferences.timeout
+      https.TIMEOUT = device.preferences.timeout
+    end
 
-    -- Did preferences change?
-    if args.old_st_store.preferences then
+    -- Examine each request# to see if it changed 
     
-      --[[
-      log.debug ('OLD preference settings:')
-      for key, value in pairs(args.old_st_store.preferences) do
-        log.debug ('\t' .. key, value)
-      end
-      log.debug ('NEW preference settings:')
-      for key, value in pairs(device.preferences) do
-        log.debug ('\t' .. key, value)
-      end
-      --]]
+    for key, value in pairs(device.preferences) do
+    
+      local pnum = tonumber(key:match('request(%d+)'))
       
-       -- Examine each preference setting to see if it changed 
+      if pnum then 
       
-      for key, value in pairs(device.preferences) do
-      
-        local pnum = tonumber(key:match('request(%d+)'))
+        if args.old_st_store.preferences[key] ~= device.preferences[key] then
         
-        if pnum then 
-        
-          if args.old_st_store.preferences[key] ~= device.preferences[key] then
+          log.info (string.format('Request #%d string changed to: %s', pnum, value))
           
-            log.info (string.format('Request #%d string changed to: %s', pnum, value))
-            
-            -- parse & validate the string
-            local method, url = validate(value, false)
-            
-            if url ~= nil then
-              log.info (string.format('\tRequest string #%d is valid', pnum))
-              webreq_commands[device.id][pnum] = {}
-              webreq_commands[device.id][pnum].method = method
-              webreq_commands[device.id][pnum].url = url
-            else
-              log.warn (string.format('\tInvalid Request string #%d -- ignored', pnum))
-              webreq_commands[device.id][pnum] = nil
-            end
-          end
-        else
-          if args.old_st_store.preferences.valuekey ~= device.preferences.valuekey then
-            log.info (string.format('Value key changed to %s', device.preferences.valuekey))
+          -- parse & validate the string
+          local method, url = validate(value, false)
+          
+          if url ~= nil then
+            log.info (string.format('\tRequest string #%d is valid', pnum))
+            webreq_commands[device.id][pnum] = {}
+            webreq_commands[device.id][pnum].method = method
+            webreq_commands[device.id][pnum].url = url
+          else
+            log.warn (string.format('\tInvalid Request string #%d -- ignored', pnum))
+            webreq_commands[device.id][pnum] = nil
           end
         end
       end
-       
-    else
-      log.warn ('Old preferences missing')
-    end  
+    end
+
+    -- Store optional bodies for request #1-5
+    for idx = 1, 5 do
+      if args.old_st_store.preferences['body'..idx] ~= device.preferences['body'..tostring(idx)] then
+        if webreq_commands[device.id][idx] then
+          webreq_commands[device.id][idx].body = device.preferences['body'..tostring(idx)]
+        end
+      end
+    end
      
   else
-    log.error ('Duplicate info_changed - IGNORED')
-  end
+    log.warn ('Old preferences missing')
+  end  
+     
 end
 
 
@@ -574,6 +565,6 @@ webreqDriver = Driver("webreqDriver", {
   }
 })
 
-log.info ('Web Requestor Multi Driver v1.0b Started')
+log.info ('Web Requestor Multi Driver v1.1 Started')
 
 webreqDriver:run()

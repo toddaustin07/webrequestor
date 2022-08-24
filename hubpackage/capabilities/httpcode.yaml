@@ -1,0 +1,17 @@
+id: partyvoice23922.httpcode
+version: 1
+status: proposed
+name: httpcode
+ephemeral: false
+attributes:
+  httpcode:
+    schema:
+      type: object
+      properties:
+        value:
+          type: string
+      additionalProperties: false
+      required:
+        - value
+    enumCommands: []
+commands: {}

@@ -1,0 +1,10 @@
+id: partyvoice23922.createanother
+version: 1
+status: proposed
+name: createanother
+ephemeral: false
+attributes: {}
+commands:
+  push:
+    name: push
+    arguments: []

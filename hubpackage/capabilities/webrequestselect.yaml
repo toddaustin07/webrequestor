@@ -1,0 +1,27 @@
+id: partyvoice23922.webrequestselect
+version: 1
+status: proposed
+name: webrequestselect
+ephemeral: false
+attributes:
+  selection:
+    schema:
+      type: object
+      properties:
+        value:
+          type: string
+          maxLength: 16
+      additionalProperties: false
+      required:
+        - value
+    setter: setSelection
+    enumCommands: []
+commands:
+  setSelection:
+    name: setSelection
+    arguments:
+      - name: value
+        optional: false
+        schema:
+          type: string
+          maxLength: 16

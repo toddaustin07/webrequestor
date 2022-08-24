@@ -1,0 +1,21 @@
+id: partyvoice23922.webrequest
+version: 1
+status: proposed
+name: WebRequest
+ephemeral: false
+attributes: {}
+commands:
+  POST:
+    name: POST
+    arguments:
+      - name: url
+        optional: false
+        schema:
+          type: string
+  GET:
+    name: GET
+    arguments:
+      - name: url
+        optional: false
+        schema:
+          type: string

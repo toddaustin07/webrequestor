@@ -1,0 +1,39 @@
+{
+    "id": "partyvoice23922.httpbody",
+    "version": 1,
+    "status": "proposed",
+    "name": "httpbody",
+    "ephemeral": false,
+    "attributes": {
+        "body": {
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "value"
+                ]
+            },
+            "setter": "setBody",
+            "enumCommands": []
+        }
+    },
+    "commands": {
+        "setBody": {
+            "name": "setBody",
+            "arguments": [
+                {
+                    "name": "body",
+                    "optional": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ]
+        }
+    }
+}

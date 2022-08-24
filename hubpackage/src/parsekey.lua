@@ -13,6 +13,14 @@ local function searchtable(table, searchkey, maxlevels, currlevel)
   for key, value in pairs(table) do
     if type(value) ~= 'table' then
       if key == searchkey then
+				-- Boolean value will be converted to string!!
+        if type(value) == 'boolean' then
+          if value == true then
+            value = 'true'
+          elseif value == false then
+            value = 'false'
+          end
+        end
 	      return value
       end
     end

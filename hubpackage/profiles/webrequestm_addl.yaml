@@ -18,6 +18,15 @@ metadata:
   vid: 77fdd47d-76b6-35c0-99ab-e85757be6b89
   mnmn: SmartThingsCommunity
 preferences:
+  - title: "Response Timeout"
+    name: timeout
+    description: "Number of seconds"
+    required: true
+    preferenceType: number
+    definition:
+      minimum: 1
+      maximum: 60
+      default: 3
   - title: "Response key to extract"
     name: valuekey
     description: "JSON or XML key"
@@ -37,6 +46,14 @@ preferences:
       stringType: text
       minLength: 18
       default: "POST:http://192.168.1.n:8888/urlpath?parm1=xxx"
+  - title: "Request #1 Body (optional)"
+    name: body1
+    description: "HTTP body"
+    required: false
+    preferenceType: string
+    definition:
+      stringType: text
+      default: "--"
   - title: "Web Request #2"
     name: request2
     description: "Method:URL string"
@@ -46,6 +63,14 @@ preferences:
       stringType: text
       minLength: 18
       default: "GET:http://192.168.1.n:8888/urlpath?parm1=xxx"
+  - title: "Request #2 Body (optional)"
+    name: body2
+    description: "HTTP body"
+    required: false
+    preferenceType: string
+    definition:
+      stringType: text
+      default: "--"
   - title: "Web Request #3"
     name: request3
     description: "Method:URL string"
@@ -55,6 +80,14 @@ preferences:
       stringType: text
       minLength: 18
       default: "POST:http://192.168.1.n:8888/urlpath?parm1=xxx"
+  - title: "Request #3 Body (optional)"
+    name: body3
+    description: "HTTP body"
+    required: false
+    preferenceType: string
+    definition:
+      stringType: text
+      default: "--"
   - title: "Web Request #4"
     name: request4
     description: "Method:URL string"
@@ -64,6 +97,14 @@ preferences:
       stringType: text
       minLength: 18
       default: "GET:http://192.168.1.n:8888/urlpath?parm1=xxx"
+  - title: "Request #4 Body (optional)"
+    name: body4
+    description: "HTTP body"
+    required: false
+    preferenceType: string
+    definition:
+      stringType: text
+      default: "--"
   - title: "Web Request #5"
     name: request5
     description: "Method:URL string"
@@ -73,6 +114,14 @@ preferences:
       stringType: text
       minLength: 18
       default: "POST:http://192.168.1.n:8888/urlpath?parm1=xxx"
+  - title: "Request #5 Body (optional)"
+    name: body5
+    description: "HTTP body"
+    required: false
+    preferenceType: string
+    definition:
+      stringType: text
+      default: "--"
   - title: "Web Request #6"
     name: request6
     description: "Method:URL string"

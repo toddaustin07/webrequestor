@@ -1,0 +1,35 @@
+{
+    "dashboard": {
+        "states": [],
+        "actions": [],
+        "basicPlus": []
+    },
+    "detailView": [
+        {
+            "label": "Optional HTTP body (Req #1)",
+            "displayType": "textField",
+            "textField": {
+                "command": "setBody",
+                "argumentType": "string",
+                "value": "body.value",
+                "valueType": "string"
+            },
+            "state": null
+        }
+    ],
+    "automation": {
+        "conditions": [],
+        "actions": [
+            {
+                "label": "HTTP body",
+                "displayType": "textField",
+                "textField": {
+                    "command": "setBody",
+                    "argumentType": "string"
+                }
+            }
+        ]
+    },
+    "id": "partyvoice23922.httpbody",
+    "version": 1
+}
