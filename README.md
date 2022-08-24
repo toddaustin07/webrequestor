@@ -20,7 +20,7 @@ When the driver gets installed onto your hub, you can do an *Add device / Scan f
 
 ### Setting up pre-configured web requests
 
-Go to the device details screen of Web Requestor and go into device Settings by tapping the 3 vertical dots in the upper right corner of the screen. Here you can configure up to 50 web requests. The format **MUST** be:
+Go to the device Controls screen of Web Requestor and go into device Settings by tapping the 3 vertical dots in the upper right corner of the screen. Here you can configure up to 50 web requests. The format **MUST** be:
 ```
 GET:http://<ip:port/path> --OR-- POST:http://<ip:port/path> --OR-- PUT:http://<ip:port/path>
   -- OR --
@@ -36,6 +36,9 @@ GET:https://<ip:port/path> --OR-- POST:https://<ip:port/path> --OR-- PUT:https:/
 #### Request Body (optional)
 
 If you need to include a body with your http request, the first 5 configurable slots allow you to include this.  This is typically going to be provided as a valid JSON or XML string, however no syntax or formatting validation is done on this field.
+
+#### Response Timeout
+As a default, the driver will timeout if no response is received within 3 seconds.  However this can be changed in the *Response Timeout* Settings option.
 
 After you have saved some web requests, return to the device Controls screen and tap the button labeled ‘Select web request to execute’. Then select the corresponding request number and your web request will be sent.
 
