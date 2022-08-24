@@ -54,6 +54,8 @@ Once the request has been sent, the HTTP response code will be displayed in the 
 
 Response data returned from the HTTP request will be shown in the HTTP Response Data field.  If the HTTP response data is XML, JSON, or HTTP data, then SmartThings will try to format it as such when it is displayed.
 
+Note that a limitation of 1024 characters has been placed on displayed and stored response data.
+
 #### Extracting a key value
 
 To make it possible for Rules to act on the returned data, there is a Settings option that allows you to specify the XML or JSON key for a single expected value in the response data.  If this Settings option is configured, the key will be searched for in the returned HTTP data and if found, the corresponding value will be displayed in the field labeled 'Extracted key value' on the device details screen.
