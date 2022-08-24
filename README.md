@@ -13,7 +13,7 @@ The Edge platform limits communication to IP addresses on your local LAN only.  
 
 ## Instructions
 
-Use the link below to access my [shared channel](https://api.smartthings.com/invitation-web/accept?id=cc2197b9-2dce-4d88-b6a1-2d198a0dfdef), enroll your hub, and select the ‘Web Requestor Multi V1.0’ driver.
+Access my [shared channel](https://api.smartthings.com/invitation-web/accept?id=cc2197b9-2dce-4d88-b6a1-2d198a0dfdef) invitation, enroll your hub, and select the ‘Web Requestor Multi V1.0’ driver.
 
 
 When the driver gets installed onto your hub, you can do an *Add device / Scan for nearby devices* and a new device called ‘Web Req Multi Master’ will be created in your ‘No room assigned’ room.
