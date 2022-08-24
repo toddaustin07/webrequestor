@@ -47,7 +47,7 @@ If the web request number (1-50) you selected has not been configured with a val
 Once the request has been sent, the HTTP response code will be displayed in the corresponding field (200, 401, etc)
 
 **Non-HTTP errors** will also be displayed in the HTTP Response Code field, but will always be preceeded by '\*\*' (two asterisks).  Possible values are:
-- \*\*Timeout: the URL used likely doesn't exist; there is a 3-second timeout for all HTTP requests
+- \*\*Timeout: the URL used likely doesn't exist (the timeout duration can be chosen in device Settings as described above, but defaults to 3 seconds)
 - \*\*No response: no acknowledgement from server; it didn’t recognize the request
 - \*\*Refused: connection was refused (no application at given port)
 - \*\*Failed: the request could not be executed for various other reasons, e.g. socket error, etc.
