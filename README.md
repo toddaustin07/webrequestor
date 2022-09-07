@@ -9,43 +9,52 @@ There are two ways this driver can be used:
 
 ### Limitations
 
-The Edge platform limits communication to IP addresses on your local LAN only.  However I have a bridge server program that can be run on any always-on computer (Windows/Linux/Mac/Raspberry Pi) on your LAN that can overcome this.  See https://github.com/toddaustin07/shellymotion for more details.
+The Edge platform limits communication to IP addresses on your local LAN only.  However I have a bridge server program that can be run on any always-on computer (Windows/Linux/Mac/Raspberry Pi) on your LAN that can overcome this.  See https://github.com/toddaustin07/edgebridge for more details.
 
 ## Instructions
 
-Use the link below to access my shared channel, enroll your hub, and select the ‘Web Requestor Multi V1.0’ driver.
-https://api.smartthings.com/invitation-web/accept?id=cc2197b9-2dce-4d88-b6a1-2d198a0dfdef
+Access my [shared channel](https://api.smartthings.com/invitation-web/accept?id=cc2197b9-2dce-4d88-b6a1-2d198a0dfdef) invitation, enroll your hub, and select the ‘Web Requestor Multi V1.0’ driver.
 
-When the driver gets installed onto your hub (up to 12 hours), you can do an Add device / Scan nearby and a new device called ‘Web Req Multi Master’ will be created in your ‘No room assigned’ room.
+
+When the driver gets installed onto your hub, you can do an *Add device / Scan for nearby devices* and a new device called ‘Web Req Multi Master’ will be created in your ‘No room assigned’ room.
 
 ### Setting up pre-configured web requests
 
-Go to the device details screen of Web Requestor and go into device Settings by tapping the 3 vertical dots in the upper right corner of the screen. Here you can configure up to 50 web requests. The format **MUST** be:
+Go to the device Controls screen of Web Requestor and go into device Settings by tapping the 3 vertical dots in the upper right corner of the screen. Here you can configure up to 50 web requests. The format **MUST** be:
 ```
-POST:http://<ip:port/path> --OR-- GET:http://<ip:port/path>
+GET:http://<ip:port/path> --OR-- POST:http://<ip:port/path> --OR-- PUT:http://<ip:port/path>
   -- OR --
-POST:https://<ip:port/path> --OR-- GET:https://<ip:port/path>
+GET:https://<ip:port/path> --OR-- POST:https://<ip:port/path> --OR-- PUT:https://<ip:port/path>
 ```
 #### Notes regarding URL string
 
 * You must include a valid IP *and* port number; if you don’t specify a port number in other apps or a browser, use ‘:80’
 * If your URL contains any spaces, use ‘%20’
-* Each request ‘slot’ has a default example string you can modify; note that any slot can be either POST or GET regardless of the preloaded example 
+* Each request ‘slot’ has a default example string you can modify; note that any slot can be GET, POST, or PUT regardless of the preloaded example 
 * URL strings can include any valid HTTP URL string, including parameters in the form of '?parm1=xxx'
 
-After you have saved some web requests, return to the device details screen and tap the button labeled ‘Select web request to execute’. Then select the corresponding request number and your web request will be sent.
+#### Request Body (optional)
+
+If you need to include a body with your http request, the first 5 configurable slots allow you to include this.  This is typically going to be provided as a valid JSON or XML string, however no syntax or formatting validation is done on this field.
+
+#### Response Timeout
+As a default, the driver will timeout if no response is received within 3 seconds.  However this can be changed in the *Response Timeout* Settings option.
+
+After you have saved some web requests, return to the device Controls screen and tap the button labeled ‘Select web request to execute’. Then select the corresponding request number and your web request will be sent.
 
 If the web request number (1-50) you selected has not been configured with a valid URL string, a 'Not Configured' message will be briefly displayed.
 
 Once the request has been sent, the HTTP response code will be displayed in the corresponding field (200, 401, etc)
 
 **Non-HTTP errors** will also be displayed in the HTTP Response Code field, but will always be preceeded by '\*\*' (two asterisks).  Possible values are:
-- \*\*Timeout: the URL used likely doesn't exist; there is a 3-second timeout for all HTTP requests
+- \*\*Timeout: the URL used likely doesn't exist (the timeout duration can be chosen in device Settings as described above, but defaults to 3 seconds)
 - \*\*No response: no acknowledgement from server; it didn’t recognize the request
 - \*\*Refused: connection was refused (no application at given port)
 - \*\*Failed: the request could not be executed for various other reasons, e.g. socket error, etc.
 
 Response data returned from the HTTP request will be shown in the HTTP Response Data field.  If the HTTP response data is XML, JSON, or HTTP data, then SmartThings will try to format it as such when it is displayed.
+
+Note that a limitation of 1024 characters has been placed on displayed and stored response data.
 
 #### Extracting a key value
 
