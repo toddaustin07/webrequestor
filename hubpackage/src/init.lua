@@ -40,6 +40,7 @@ local devcounter = 1
 local webreqDriver
 local initialized = false
 local webreq_commands = {}
+local BODYDELIM = '{{^}}'
 
 -- Custom capabilities
 local cap_select = capabilities["partyvoice23922.webrequestselect"]
@@ -141,23 +142,49 @@ local function validate(input, silent)
   
 end
 
--- Send http or https request and emit response, or handle errors
-local function issue_request(device, req_method, req_url, sendbody)
+local function addheaders(headerlist)
 
-  local responsechunks = {}
-  
-  local content_length = 0
-  if sendbody then
-    content_length = string.len(sendbody)
+  local found_accept = false
+  local headers = {}
+
+  if headerlist then
+    
+    local items = {}
+    
+    for element in string.gmatch(headerlist, '([^, ]+)') do
+      table.insert(items, element);
+    end
+    
+    local i = 0
+    for _, header in ipairs(items) do
+      key, value = header:match('([^=]+)=([^=]+)$')
+      if key and value then
+        headers[key] = value
+        if string.lower(key) == 'accept' then; found_accept = true; end
+      end
+    end
   end
   
-  local sendheaders = {
-                        ["Acccept"] = '*/*',
-                        ["Content-Length"] = content_length,
-                      }
+  if not found_accept then
+    headers["Accept"] = '*/*'
+  end
+  
+  return headers
+end
+
+-- Send http or https request and emit response, or handle errors
+local function issue_request(device, req_method, req_url, sendbody, optheaders)
+
+  local responsechunks = {}
+  local body, code, headers, status
   
   local protocol = req_url:match('^(%a+):')
-  local body, code, headers, status
+  
+  local sendheaders = addheaders(optheaders)
+  
+  if sendbody then
+    sendheaders["Content-Length"] = string.len(sendbody)
+  end
   
   if protocol == 'https' then
   
@@ -282,7 +309,7 @@ local function create_another_device(driver, counter)
   local VEND_LABEL = string.format('Web Req Multi #%d', counter)
   local MODEL = 'webrequestormv1'
   local ID = 'webreqm' .. '_' .. socket.gettime()
-  local PROFILE = 'webrequestm_addl.v1'
+  local PROFILE = 'webrequestm_addl.v2'
 
   log.debug (string.format('Creating additional device: label=<%s>, id=<%s>', VEND_LABEL, ID))
 
@@ -319,16 +346,14 @@ local function handle_selection(driver, device, command)
     if type(webreq_commands[device.id][reqnumber]) == 'table' then
       device:emit_event(cap_select.selection(command.args.value))
       
-      local body = nil
-      if reqnumber <= 5 then
-        if device.preferences['body'..tostring(reqnumber)] ~= '--' then
-          body = device.preferences['body'..tostring(reqnumber)]
-        end
-      end
+      local body = webreq_commands[device.id][reqnumber].body
+      
+      local headers = webreq_commands[device.id][reqnumber].headers
       
       log.info (string.format('SEND %s COMMAND: %s', webreq_commands[device.id][reqnumber].method, webreq_commands[device.id][reqnumber].url))
       log.info ('\twith body:', body)
-      device.thread:queue_event(issue_request, device, webreq_commands[device.id][reqnumber].method, webreq_commands[device.id][reqnumber].url, body)
+      log.info ('\twith headers:', headers)
+      device.thread:queue_event(issue_request, device, webreq_commands[device.id][reqnumber].method, webreq_commands[device.id][reqnumber].url, body, headers)
       
     else
       log.debug (string.format('Web request #%d not configured', reqnumber))
@@ -349,7 +374,23 @@ local function handle_requestcmd(_, device, command)
   if (command.command == 'GET') or (command.command == 'POST') then
   
     if command.args.url ~= nil then
-      device.thread:queue_event(issue_request, device, command.command, command.args.url, nil)
+    
+      local url = command.args.url
+      local body = nil
+      -- See if there is an appended body
+      local delim_idx = command.args.url:find(BODYDELIM)
+      if delim_idx then
+        body = string.sub(command.args.url, delim_idx + BODYDELIM:len())
+        url = string.sub(command.args.url, 1, delim_idx-1)
+      end
+        
+      local headers = nil
+      local optheaders = device.preferences.autoheaders
+      if optheaders ~= nil and optheaders ~= 'null' and optheaders ~= '--' and optheaders ~= '' then
+        headers = optheaders
+      end
+      
+      device.thread:queue_event(issue_request, device, command.command, url, body, headers)
     else
       log.error ('\tURL command argument missing')
     end
@@ -378,7 +419,15 @@ end
 local function device_init(driver, device)
   
   log.debug(device.id .. ": " .. device.device_network_id .. "> INITIALIZING")
-
+  
+  local ismaster = device:supports_capability_by_id('partyvoice23922.createanother')
+  log.debug (string.format('Device <%s> is master? %s', device.label, ismaster))
+  if ismaster then
+    device:try_update_metadata({profile='webrequestm.v2'})
+  else
+    device:try_update_metadata({profile='webrequestm_addl.v2'})
+  end
+  
   webreq_commands[device.id] = {}
 
   for key, value in pairs(device.preferences) do
@@ -392,8 +441,24 @@ local function device_init(driver, device)
         webreq_commands[device.id][pnum] = {}
         webreq_commands[device.id][pnum].method = method
         webreq_commands[device.id][pnum].url = url
+        
         if pnum <= 5 then
-          webreq_commands[device.id][pnum].body = device.preferences['body'..tostring(pnum)]
+          local body = device.preferences['body'..tostring(pnum)]
+          if body == 'null' or body == '--' or body == '' then; body = nil; end
+          if body then
+            local body_part2 = device.preferences['bodyb'..tostring(pnum)]
+            if body_part2 ~= nil and body_part2 ~= 'null' and body_part2 ~= '--' then
+              body = body .. body_part2
+            end
+          end
+          log.debug ('Stashing body:', body)
+          webreq_commands[device.id][pnum].body = body
+          
+          local headers = device.preferences['headers'..tostring(pnum)]
+          if headers ~= nil and headers ~= 'null' and headers ~= '--' then
+            webreq_commands[device.id][pnum].headers = headers
+          end
+          
         end
       end
     end
@@ -487,9 +552,29 @@ local function handler_infochanged (driver, device, event, args)
 
     -- Store optional bodies for request #1-5
     for idx = 1, 5 do
-      if args.old_st_store.preferences['body'..idx] ~= device.preferences['body'..tostring(idx)] then
+      if args.old_st_store.preferences['body'..idx] ~= device.preferences['body'..tostring(idx)] or
+         args.old_st_store.preferences['bodyb'..idx] ~= device.preferences['bodyb'..tostring(idx)] then
         if webreq_commands[device.id][idx] then
-          webreq_commands[device.id][idx].body = device.preferences['body'..tostring(idx)]
+          local body = device.preferences['body'..tostring(idx)]
+          log.debug (string.format('\tbody: %s, length= %s, type=%s', body, body:len(), type(body)))
+          if body == 'null' or body == '--' or body == '' then; body = nil; end
+          if body then
+            local body_part2 = device.preferences['bodyb'..tostring(idx)]
+            if body_part2 ~= nil and body_part2 ~= 'null' and body_part2 ~= '--' then
+              body = body .. body_part2
+            end
+          end
+          log.debug ('Stashing body:', body)
+          webreq_commands[device.id][idx].body = body
+        end
+      end
+      
+      if args.old_st_store.preferences['headers'..idx] ~= device.preferences['headers'..tostring(idx)] then
+        if webreq_commands[device.id][idx] then
+          local headers = device.preferences['headers'..tostring(idx)]
+          if headers ~= nil and headers ~= 'null' and headers ~= '--' then
+            webreq_commands[device.id][idx].headers = headers
+          end
         end
       end
     end
@@ -512,7 +597,7 @@ local function discovery_handler(driver, _, should_continue)
     local VEND_LABEL = 'Web Req Multi Master'
     local MODEL = 'webrequestormv1'
     local ID = 'webreqm' .. '_' .. socket.gettime()
-    local PROFILE = 'webrequestm.v1'
+    local PROFILE = 'webrequestm.v2'
 
     -- Create master device
 	
@@ -565,6 +650,6 @@ webreqDriver = Driver("webreqDriver", {
   }
 })
 
-log.info ('Web Requestor Multi Driver v1.1 Started')
+log.info ('Web Requestor Multi Driver v1.2 Started')
 
 webreqDriver:run()
