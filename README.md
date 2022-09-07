@@ -116,7 +116,7 @@ For Rules, here is an example of how this would be done:
                   "command": "GET",
                   "arguments": [
                     {
-                      "string": "http://192.168.1.104:1755/tts_SCPD.xml"
+                      "string": "http://192.168.1.104:1755/tts_SCPD.xml{{^}}some request body data can go here"
                     }
                   ]
                 }
