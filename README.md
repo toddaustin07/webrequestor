@@ -41,7 +41,7 @@ If you need to include a body with your http request, the first 5 configurable s
 
 Also included with the first 5 configurable slots is a Settings field to specify any required HTTP headers.  They should be provided in a comma-delimited list in the form of \<*headerkey*\>=\<*value*\>.  For example:
 ```
-Content-type=text/html, Authorization=mytoken12345
+Content-Type=text/html, Authorization=mytoken12345
 ```
 - Note the use of the '**=**' character between key and value; *not* ':'
 - Note this dis-allows the use of any additional comma characters in the header values themselves.
