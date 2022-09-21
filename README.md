@@ -133,6 +133,6 @@ For Rules, here is an example of how this would be done:
 ```
 Issue a command of **GET** or **POST** to the **partyvoice23922.webrequest** capability of the web requestor device, and specify an argument string containing the URL.
 
-A body can also be included in these argument strings.  The characters **{{^}}** in the GET or POST command argument will serve as a delimiter between the request head and request body.
+A body can also be included in these argument strings.  The characters **{{^}}** in the GET or POST command argument will serve as a delimiter between the request URL and request body.
 
 Custom headers can be configured in the device Settings field labled 'Automation-generated Request Headers'.  Follow the same format as that specified above for pre-configured requests (comma-delimited string of \<*headerkey*\>=\<*value*\> pairs).
