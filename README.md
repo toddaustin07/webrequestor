@@ -47,7 +47,7 @@ Content-Type=text/html, Authorization=mytoken12345
 - Note this dis-allows the use of any additional comma characters in the header values themselves.
 - Spaces are allowed in the value (although not in the headerkey).  For example: 'Authorization=Bearer mytokenabcd1234'
 
-If a body is included in the request, then a Content-type header should be specified.
+If a body is included in the request, then a Content-Type header should be specified.
 
 Note that all requests are sent with an Accept: \*/\* by default.
 
