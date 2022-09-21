@@ -43,7 +43,7 @@ Also included with the first 5 configurable slots is a Settings field to specify
 ```
 Content-Type=text/html, Authorization=mytoken12345
 ```
-- Note the use of the '**=**' character between key and value; *not* ':'
+- Note the use of the '**=**' character between headerkey and value; *not* ':'
 - Note this dis-allows the use of any additional comma characters in the header values themselves.
 - Spaces are allowed in the value (although not in the headerkey).  For example: 'Authorization=Bearer mytokenabcd1234'
 
