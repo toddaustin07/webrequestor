@@ -43,7 +43,9 @@ Also included with the first 5 configurable slots is a Settings field to specify
 ```
 Content-type=text/html, Authorization=mytoken12345
 ```
-Note this dis-allows the use of any additional comma characters in the header values themselves.
+- Note the use of the '**=**' character between key and value; *not* ':'
+- Note this dis-allows the use of any additional comma characters in the header values themselves.
+- Spaces are allowed in the value (although not in the headerkey).  For example: 'Authorization=Bearer mytokenabcd1234'
 
 If a body is included in the request, then a Content-type header should be specified.
 
