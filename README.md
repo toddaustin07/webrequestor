@@ -136,3 +136,6 @@ Issue a command of **GET** or **POST** to the **partyvoice23922.webrequest** cap
 A body can also be included in these argument strings.  The characters **{{^}}** in the GET or POST command argument will serve as a delimiter between the request URL and request body.
 
 Custom headers can be configured in the device Settings field labled 'Automation-generated Request Headers'.  Follow the same format as that specified above for pre-configured requests (comma-delimited string of \<*headerkey*\>=\<*value*\> pairs).
+
+### Diagnosing problems
+A windows application is included in this package called simpleserv.exe.  It can be run on a Windows 10 computer and will display http requests received on port 6666.  You can redirect your web requests temporarily to your Windows computer IP and port 6666 to make sure they are being sent as you expect.  The app always returns an HTTP 200 OK response for a properly formatted HTTP request.
