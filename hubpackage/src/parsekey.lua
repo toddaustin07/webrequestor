@@ -4,6 +4,66 @@ local xml_handler = require "xmlhandler.tree"
 local json = require "dkjson"
 
 
+local function is_array(t)
+  if type(t) ~= "table" then return false end
+  local i = 0
+  for _ in pairs(t) do
+    i = i + 1
+    if t[i] == nil then return false end
+  end
+  return true
+end
+
+local function getTableElement(key, input_table)
+
+  if not key or type(key) ~= 'string' then
+    log.error ('Invalid key string')
+    return
+  end
+
+  if not input_table or type(input_table) ~= 'table' then
+    log.error ('Missing or invalid table object')
+    return
+  end
+  
+  local compound = input_table
+
+  local found = false
+  local elementslist = {}
+
+  for element in string.gmatch(key, "[^%.]+") do
+    table.insert(elementslist, element)
+  end
+  
+  for el_idx=1, #elementslist do
+    local element = elementslist[el_idx]
+    local key = element:match('^([^%[]+)')
+    local array_index = element:match('%[(%d+)%]$')
+    if array_index then; array_index = tonumber(array_index) + 1; end	-- adjust for Lua indexes starting at 1
+    compound = compound[key]
+    if compound == nil then; break; end
+    
+    if array_index then
+      if is_array(compound) then
+	if compound[array_index] then
+	  compound = compound[array_index]
+	else
+	  break
+	end
+      else
+	break
+      end
+    end
+    
+    if type(compound) ~= 'table' then
+      if el_idx == #elementslist then; return compound; end
+    end
+  end
+  
+end
+
+
+-- Deprecated
 local function searchtable(table, searchkey, maxlevels, currlevel)
 
   if not currlevel then; currlevel = 0; end
@@ -53,7 +113,6 @@ local function findkeyvalue(response, key)
 
     rtable = handler.root
 
-
   elseif response:find('{', 1, 'plaintext') == 1 then
     
     rtable, pos, err = json.decode (response, 1, nil)
@@ -66,8 +125,8 @@ local function findkeyvalue(response, key)
   end
   
   if rtable then
-    local result = searchtable(rtable, key, 5)
-    if result then
+    local result = getTableElement(key, rtable)
+    if result ~= nil then
       return result
     else
       log.warn ('Configured Key value was not found')
