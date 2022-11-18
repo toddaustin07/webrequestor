@@ -75,7 +75,7 @@ Note that a limitation of 1024 characters has been placed on displayed and store
 
 #### Extracting a key value
 
-To make it possible for Rules to act on the returned data, there is a Settings option that allows you to specify a key for a single expected value in JSON or XML response data.  If this Settings option is configured, the key will be to extract the corresponding value, which will be displayed in the field labeled 'Extracted key value' on the device Controls screen.
+To make it possible for Rules to act on the returned data, there is a Settings option that allows you to specify a key for a single expected value in JSON or XML response data.  If this Settings option is configured, the key will be used to extract the corresponding value, which will be displayed in the field labeled 'Extracted key value' on the device Controls screen.
 
 ##### Key format
 The format of the key is dot-notation and can include indexes where arrays may be present in the response data.
